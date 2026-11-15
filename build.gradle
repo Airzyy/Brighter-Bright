@@ -40,10 +40,33 @@ repositories {
     mavenCentral()
 }
 
+// Modrinth distributes the NeoForge mod as a wrapper JAR. Sodium's public
+// API is in the nested jarjar mod, so expose that inner JAR to javac.
+configurations {
+    sodiumMod
+}
+
+def sodiumModJarPath = 'META-INF/jarjar/net.caffeinemc.sodium-neoforge-0.8.13+mc1.21.1-mod.jar'
+def sodiumApiJar = layout.buildDirectory.file('sodium-api/sodium-api.jar')
+
 dependencies {
-    // Compile against the exact Sodium build this mod targets.
-    // Sodium itself must be installed separately in the Minecraft instance.
-    compileOnly 'maven.modrinth:AANobbMI:uMOpc5uV'
+    sodiumMod 'maven.modrinth:AANobbMI:uMOpc5uV'
+    compileOnly files(sodiumApiJar)
+}
+
+tasks.register('extractSodiumApi', Copy) {
+    from({ zipTree(configurations.sodiumMod.singleFile) }) {
+        include sodiumModJarPath
+        eachFile { details ->
+            details.path = 'sodium-api.jar'
+        }
+        includeEmptyDirs = false
+    }
+    into layout.buildDirectory.dir('sodium-api')
+}
+
+tasks.named('compileJava').configure {
+    dependsOn tasks.named('extractSodiumApi')
 }
 
 tasks.withType(JavaCompile).configureEach {

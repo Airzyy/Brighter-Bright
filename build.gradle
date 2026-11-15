@@ -1,0 +1,43 @@
+plugins {
+    id 'net.neoforged.moddev' version '2.0.107'
+}
+
+group = 'com.airzyy'
+version = '1.0.0'
+
+base {
+    archivesName = 'Brighter-Bright'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+neoForge {
+    version = '21.1.234'
+
+    runs {
+        client {
+            client()
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'brighterbright'
+        }
+    }
+
+    mods {
+        brighterbright {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+dependencies {
+    // Compile against the exact Sodium build this mod targets.
+    // Sodium itself must be installed separately in the Minecraft instance.
+    compileOnly 'maven.modrinth:AANobbMI:uMOpc5uV'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

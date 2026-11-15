@@ -1,0 +1,34 @@
+modLoader="javafml"
+loaderVersion="[4,)"
+license="MIT"
+
+[[mods]]
+modId="brighterbright"
+version="1.0.0"
+displayName="Brighter Bright"
+description='''Raises the maximum value of Sodium's existing brightness slider from 100% to 200%.'''
+displayTest="IGNORE_SERVER_VERSION"
+
+[[dependencies.brighterbright]]
+modId="neoforge"
+type="required"
+versionRange="[21.1.0,)"
+ordering="NONE"
+side="CLIENT"
+
+[[dependencies.brighterbright]]
+modId="minecraft"
+type="required"
+versionRange="[1.21.1,1.22)"
+ordering="NONE"
+side="CLIENT"
+
+[[dependencies.brighterbright]]
+modId="sodium"
+type="required"
+versionRange="[0.8.13,)"
+ordering="AFTER"
+side="CLIENT"
+
+[modproperties.brighterbright]
+"sodium:config_api_user"="com.airzyy.brighterbright.BrightnessConfig"

@@ -32,6 +32,14 @@ neoForge {
     }
 }
 
+repositories {
+    maven {
+        name = 'Modrinth'
+        url = 'https://api.modrinth.com/maven'
+    }
+    mavenCentral()
+}
+
 dependencies {
     // Compile against the exact Sodium build this mod targets.
     // Sodium itself must be installed separately in the Minecraft instance.

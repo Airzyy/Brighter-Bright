@@ -1,7 +1,6 @@
 package com.airzyy.brighterbright;
 
 import net.caffeinemc.mods.sodium.api.config.ConfigEntryPoint;
-import net.caffeinemc.mods.sodium.api.config.option.Range;
 import net.caffeinemc.mods.sodium.api.config.structure.ConfigBuilder;
 import net.minecraft.resources.ResourceLocation;
 
@@ -21,7 +20,7 @@ public final class BrightnessConfig implements ConfigEntryPoint {
                 .registerOptionOverlay(
                         SODIUM_GAMMA,
                         builder.createIntegerOption(SODIUM_GAMMA)
-                                .setRange(new Range(0, 200, 1))
+                                .setRange(0, 200, 1)
                 );
     }
 }

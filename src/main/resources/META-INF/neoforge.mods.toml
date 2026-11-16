@@ -9,6 +9,9 @@ displayName="Brighter Bright"
 description='''Raises the maximum value of Sodium's existing brightness slider from 100% to 200%.'''
 displayTest="IGNORE_SERVER_VERSION"
 
+[[mixins]]
+config="brighterbright.mixins.json"
+
 [[dependencies.brighterbright]]
 modId="neoforge"
 type="required"

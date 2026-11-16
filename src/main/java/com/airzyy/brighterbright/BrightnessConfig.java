@@ -3,20 +3,18 @@ package com.airzyy.brighterbright;
 import net.caffeinemc.mods.sodium.api.config.ConfigEntryPoint;
 import net.caffeinemc.mods.sodium.api.config.structure.ConfigBuilder;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.OptionInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.loading.FMLPaths;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
 
-/**
- * Extends Sodium's existing brightness slider and stores the extended value
- * separately so values above Minecraft's normal gamma range survive reloads.
- */
 public final class BrightnessConfig implements ConfigEntryPoint {
     private static final ResourceLocation SODIUM_GAMMA =
             ResourceLocation.fromNamespaceAndPath("sodium", "general.gamma");
@@ -49,12 +47,20 @@ public final class BrightnessConfig implements ConfigEntryPoint {
     private static void setBrightness(int value) {
         brightness = Math.max(0, Math.min(200, value));
         applyBrightness();
+        save();
     }
 
     private static void applyBrightness() {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.options != null) {
-            minecraft.options.gamma().set(brightness / 100.0);
+        if (minecraft.options == null) return;
+
+        try {
+            OptionInstance<Double> gamma = minecraft.options.gamma();
+            Field valueField = OptionInstance.class.getDeclaredField("value");
+            valueField.setAccessible(true);
+            valueField.set(gamma, brightness / 100.0);
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException("Could not apply brightness above 100%", exception);
         }
     }
 
@@ -63,7 +69,6 @@ public final class BrightnessConfig implements ConfigEntryPoint {
             brightness = 100;
             return;
         }
-
         Properties properties = new Properties();
         try (InputStream input = Files.newInputStream(CONFIG_FILE)) {
             properties.load(input);
@@ -77,7 +82,6 @@ public final class BrightnessConfig implements ConfigEntryPoint {
     private static void save() {
         Properties properties = new Properties();
         properties.setProperty("brightness", Integer.toString(brightness));
-
         try {
             Files.createDirectories(CONFIG_FILE.getParent());
             try (OutputStream output = Files.newOutputStream(CONFIG_FILE)) {
